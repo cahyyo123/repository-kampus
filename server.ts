@@ -6,9 +6,15 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
+/* =========================
+   FIX __dirname (ESM)
+========================= */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/* =========================
+   APP INIT
+========================= */
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -16,10 +22,21 @@ app.use(cors());
 app.use(express.json());
 
 /* =========================
-   PATH & STORAGE
+   BASE PATH
 ========================= */
-
 const BASE_DIR = process.cwd();
+
+/* =========================
+   SERVE FRONTEND (FIX BLANK PAGE)
+========================= */
+// 👉 INI YANG KURANG DI PUNYAMU SEBELUMNYA
+const clientPath = path.join(BASE_DIR, 'dist');
+
+app.use(express.static(clientPath));
+
+/* =========================
+   FILE UPLOAD
+========================= */
 const uploadDir = path.join(BASE_DIR, 'uploads', 'file_pdf');
 
 if (!fs.existsSync(uploadDir)) {
@@ -27,10 +44,6 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 app.use('/uploads', express.static(path.join(BASE_DIR, 'uploads')));
-
-/* =========================
-   MULTER
-========================= */
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, uploadDir),
@@ -45,7 +58,6 @@ const upload = multer({ storage });
 /* =========================
    DATABASE
 ========================= */
-
 const dbPath = path.join(BASE_DIR, 'repository.db');
 const db = new Database(dbPath);
 
@@ -85,9 +97,8 @@ CREATE TABLE IF NOT EXISTS menus (
 `);
 
 /* =========================
-   SEED
+   SEED DATA
 ========================= */
-
 db.prepare(`
 INSERT OR IGNORE INTO users (username,password,name,role)
 VALUES ('admin','admin123','Administrator','admin')
@@ -97,15 +108,14 @@ const menuCount = db.prepare(`SELECT COUNT(*) as c FROM menus`).get() as any;
 
 if (menuCount.c === 0) {
   const insert = db.prepare(`INSERT INTO menus (label,url,is_hidden) VALUES (?,?,?)`);
-  insert.run('Home','/',0);
-  insert.run('Browse','/browse',0);
-  insert.run('Tentang','/about',0);
+  insert.run('Home', '/', 0);
+  insert.run('Browse', '/browse', 0);
+  insert.run('Tentang', '/about', 0);
 }
 
 /* =========================
    AUTH
 ========================= */
-
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -114,16 +124,16 @@ app.post('/api/login', (req, res) => {
   ).get(username, password) as any;
 
   if (!user) {
-    return res.status(401).json({ success:false, message:'Login gagal' });
+    return res.status(401).json({ success: false, message: 'Login gagal' });
   }
 
   res.json({
-    success:true,
-    user:{
-      id:user.id,
-      username:user.username,
-      name:user.name,
-      role:user.role
+    success: true,
+    user: {
+      id: user.id,
+      username: user.username,
+      name: user.name,
+      role: user.role
     }
   });
 });
@@ -134,18 +144,17 @@ app.post('/api/register', (req, res) => {
   try {
     db.prepare(
       `INSERT INTO users (username,password,name) VALUES (?,?,?)`
-    ).run(username,password,name);
+    ).run(username, password, name);
 
-    res.json({ success:true });
+    res.json({ success: true });
   } catch {
-    res.status(400).json({ success:false, message:'User sudah ada' });
+    res.status(400).json({ success: false, message: 'User sudah ada' });
   }
 });
 
 /* =========================
    MENUS
 ========================= */
-
 app.get('/api/menus', (_, res) => {
   const data = db.prepare(`SELECT * FROM menus WHERE is_hidden=0`).all();
   res.json(data);
@@ -154,16 +163,14 @@ app.get('/api/menus', (_, res) => {
 /* =========================
    CATEGORIES
 ========================= */
-
 app.get('/api/categories', (_, res) => {
   res.json(db.prepare(`SELECT * FROM categories`).all());
 });
 
 /* =========================
-   REPOSITORY LIST
+   REPOSITORY
 ========================= */
-
-app.get('/api/repository', (req, res) => {
+app.get('/api/repository', (_, res) => {
   const data = db.prepare(`
     SELECT r.*, c.name as category_name
     FROM repository r
@@ -174,16 +181,12 @@ app.get('/api/repository', (req, res) => {
   res.json(data);
 });
 
-/* =========================
-   ADD REPOSITORY
-========================= */
-
 app.post('/api/repository', upload.single('file'), (req, res) => {
   try {
     const { title, author, nim, year, category_id, uploader_id } = req.body;
 
     if (!req.file) {
-      return res.status(400).json({ message:'File wajib' });
+      return res.status(400).json({ message: 'File wajib' });
     }
 
     db.prepare(`
@@ -200,16 +203,12 @@ app.post('/api/repository', upload.single('file'), (req, res) => {
       uploader_id || null
     );
 
-    res.json({ success:true });
+    res.json({ success: true });
 
-  } catch (err:any) {
-    res.status(500).json({ message:err.message });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
   }
 });
-
-/* =========================
-   DELETE REPOSITORY
-========================= */
 
 app.delete('/api/repository/:id', (req, res) => {
   try {
@@ -226,38 +225,41 @@ app.delete('/api/repository/:id', (req, res) => {
 
     db.prepare(`DELETE FROM repository WHERE id=?`).run(req.params.id);
 
-    res.json({ success:true });
+    res.json({ success: true });
 
-  } catch (err:any) {
-    res.status(500).json({ message:err.message });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
   }
 });
 
 /* =========================
    STATS
 ========================= */
-
 app.get('/api/stats', (_, res) => {
   const total = db.prepare(`SELECT COUNT(*) as c FROM repository`).get() as any;
   res.json({ total: total.c });
 });
 
 /* =========================
-   START
+   ROOT (API CHECK)
 ========================= */
-
-app.listen(Number(PORT), '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-app.get('/', (req, res) => {
+app.get('/api', (_, res) => {
   res.json({
     status: 'OK',
-    message: 'Repository API running',
-    endpoints: [
-      '/api/login',
-      '/api/menus',
-      '/api/repository'
-    ]
+    message: 'Repository API running'
   });
+});
+
+/* =========================
+   SPA FALLBACK (FIX BLANK PAGE 100%)
+========================= */
+app.get('*', (_, res) => {
+  res.sendFile(path.join(clientPath, 'index.html'));
+});
+
+/* =========================
+   START SERVER
+========================= */
+app.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
