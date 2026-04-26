@@ -4,11 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
-    "build": "vite build",
-    "start": "node dist/server.js",
-    "frontend:build": "vite build",
-    "lint": "tsc --noEmit"
+  "dev": "tsx server.ts",
+  "build:server": "tsc",
+  "build:client": "vite build",
+  "build": "npm run build:server && npm run build:client",
+  "start": "node dist/server.js"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
