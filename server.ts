@@ -263,3 +263,10 @@ app.get('*', (_, res) => {
 app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.get('/api/settings', (_, res) => {
+  res.json({
+    theme: "light",
+    appName: "Repository Kampus"
+  });
+});
