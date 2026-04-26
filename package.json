@@ -10,7 +10,6 @@
     "frontend:build": "vite build",
     "frontend:preview": "vite preview",
     "lint": "tsc --noEmit"
-  }
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
