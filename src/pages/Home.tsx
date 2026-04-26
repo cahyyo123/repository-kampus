@@ -9,7 +9,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/stats')
+    fetch(`${import.meta.env.VITE_API_URL}/api/stats`)
       .then(res => res.json())
       .then(data => setStats(data));
   }, []);

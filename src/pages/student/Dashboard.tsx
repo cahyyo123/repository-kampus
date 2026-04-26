@@ -20,7 +20,7 @@ export default function StudentDashboard() {
 
   const fetchDocuments = () => {
     setLoading(true);
-    fetch(`/api/student/repository/${user.id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/student/repository/${user.id}`)
       .then(res => res.json())
       .then(data => {
         setDocuments(data);

@@ -16,7 +16,7 @@ export default function Browse() {
   const itemsPerPage = parseInt(searchParams.get('limit') || '10', 10);
 
   useEffect(() => {
-    fetch('/api/categories')
+    fetch(`${import.meta.env.VITE_API_URL}/api/categories`)
       .then(res => res.json())
       .then(data => setCategories(data));
   }, []);
@@ -29,7 +29,7 @@ export default function Browse() {
     if (category) params.append('category', category);
     if (sort) params.append('sort', sort);
 
-    fetch(`/api/repository?${params.toString()}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/repository?${params.toString()}`)
       .then(res => res.json())
       .then(data => {
         setDocuments(data);

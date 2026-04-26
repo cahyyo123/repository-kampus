@@ -24,11 +24,11 @@ export default function StudentEditDocument() {
       navigate('/login');
       return;
     }
-    fetch('/api/categories')
+    fetch(`${import.meta.env.VITE_API_URL}/api/categories`)
       .then(res => res.json())
       .then(data => setCategories(data));
 
-    fetch(`/api/repository/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/repository/${id}`)
       .then(res => res.json())
       .then(data => {
         // Security check
@@ -120,7 +120,7 @@ export default function StudentEditDocument() {
     formData.set('custom_files_meta', JSON.stringify(customFilesMeta));
 
     try {
-      const res = await fetch(`/api/repository/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/repository/${id}`, {
         method: 'PUT',
         body: formData,
       });

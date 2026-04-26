@@ -12,7 +12,7 @@ export default function AdminAddDocument() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/categories')
+    fetch(`${import.meta.env.VITE_API_URL}/api/categories`)
       .then(res => res.json())
       .then(data => setCategories(data));
   }, []);
@@ -70,7 +70,7 @@ export default function AdminAddDocument() {
     formData.set('custom_files_meta', JSON.stringify(customFilesMeta));
 
     try {
-      const res = await fetch('/api/repository', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/repository`, {
         method: 'POST',
         body: formData,
       });

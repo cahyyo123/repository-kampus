@@ -10,7 +10,7 @@ export default function DynamicPage() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/pages/slug/${slug}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/pages/slug/${slug}`)
       .then((res) => {
         if (!res.ok) throw new Error('Not found');
         return res.json();

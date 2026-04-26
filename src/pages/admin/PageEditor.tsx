@@ -24,7 +24,7 @@ export default function PageEditor() {
     }
 
     if (id) {
-      fetch('/api/pages')
+      fetch(`${import.meta.env.VITE_API_URL}/api/pages`)
         .then(res => res.json())
         .then(data => {
           const page = data.find((p: any) => p.id === parseInt(id));
@@ -50,7 +50,7 @@ export default function PageEditor() {
     e.preventDefault();
     setLoading(true);
     
-    const url = id ? `/api/pages/${id}` : '/api/pages';
+    const url = id ? `${import.meta.env.VITE_API_URL}/api/pages/${id}` : `${import.meta.env.VITE_API_URL}/api/pages`;
     const method = id ? 'PUT' : 'POST';
     
     try {

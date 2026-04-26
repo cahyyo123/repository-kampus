@@ -19,7 +19,7 @@ export default function Login() {
 
     try {
       if (isRegister) {
-        const res = await fetch('/api/register', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, name, email, password }),
@@ -33,7 +33,7 @@ export default function Login() {
           setError(data.message);
         }
       } else {
-        const res = await fetch('/api/login', {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),

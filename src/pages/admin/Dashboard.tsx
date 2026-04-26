@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent, ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, FileText, Search, AlertCircle, CheckCircle, Clock, Key, Layers, Menu as MenuIcon, Eye, EyeOff, LayoutDashboard, Users, Settings, Tag, MonitorPlay, UploadCloud, ChevronRight } from 'lucide-react';
 
@@ -32,22 +32,22 @@ export default function AdminDashboard() {
     const { targetId, actionType } = confirmDialog;
     
     if (actionType === 'doc') {
-      const res = await fetch(`/api/repository/${targetId}`, { method: 'DELETE' });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/repository/${targetId}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) fetchDocuments(searchQuery, statusFilter);
       else showAlert(data.message || 'Gagal menghapus');
     } else if (actionType === 'page') {
-      await fetch(`/api/pages/${targetId}`, { method: 'DELETE' }); 
+      await fetch(`${import.meta.env.VITE_API_URL}/api/pages/${targetId}`, { method: 'DELETE' }); 
       fetchPages();
     } else if (actionType === 'menu') {
-      await fetch(`/api/menus/${targetId}`, { method: 'DELETE' }); 
+      await fetch(`${import.meta.env.VITE_API_URL}/api/menus/${targetId}`, { method: 'DELETE' }); 
       fetchMenus();
     } else if (actionType === 'category') {
-      const res = await fetch(`/api/categories/${targetId}`, { method: 'DELETE' });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/${targetId}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) fetchCategories(); else showAlert(data.message);
     } else if (actionType === 'user') {
-      await fetch(`/api/users/${targetId}`, { method: 'DELETE' }); 
+      await fetch(`${import.meta.env.VITE_API_URL}/api/users/${targetId}`, { method: 'DELETE' }); 
       fetchUsers();
     }
     setConfirmDialog({ isOpen: false, message: '', targetId: null, actionType: null });
@@ -88,16 +88,16 @@ export default function AdminDashboard() {
   // --- Fetchers ---
   const fetchDocuments = (q = '', status = statusFilter) => {
     setLoading(true);
-    fetch(`/api/repository?q=${encodeURIComponent(q)}&status=${status}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/repository?q=${encodeURIComponent(q)}&status=${status}`)
       .then(res => res.json())
       .then(data => { setDocuments(data); setLoading(false); });
   };
-  const fetchRequests = () => fetch('/api/access-requests').then(res => res.json()).then(setRequests);
-  const fetchPages = () => fetch('/api/pages').then(res => res.json()).then(setPages);
-  const fetchMenus = () => fetch('/api/menus').then(res => res.json()).then(setMenus);
-  const fetchCategories = () => fetch('/api/categories').then(res => res.json()).then(setCategories);
-  const fetchUsers = () => fetch('/api/users').then(res => res.json()).then(setUsers);
-  const fetchSettings = () => fetch('/api/settings').then(res => res.json()).then(setSettings);
+  const fetchRequests = () => fetch(`${import.meta.env.VITE_API_URL}/api/access-requests`).then(res => res.json()).then(setRequests);
+  const fetchPages = () => fetch(`${import.meta.env.VITE_API_URL}/api/pages`).then(res => res.json()).then(setPages);
+  const fetchMenus = () => fetch(`${import.meta.env.VITE_API_URL}/api/menus`).then(res => res.json()).then(setMenus);
+  const fetchCategories = () => fetch(`${import.meta.env.VITE_API_URL}/api/categories`).then(res => res.json()).then(setCategories);
+  const fetchUsers = () => fetch(`${import.meta.env.VITE_API_URL}/api/users`).then(res => res.json()).then(setUsers);
+  const fetchSettings = () => fetch(`${import.meta.env.VITE_API_URL}/api/settings`).then(res => res.json()).then(setSettings);
 
   // --- File Handlers ---
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
     const formData = new FormData();
     formData.append('image', e.target.files[0]);
     try {
-      const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload-image`, { method: 'POST', body: formData });
       const data = await res.json();
       if (data.success) {
         setSettings({ ...settings, site_logo: data.url });
@@ -131,7 +131,7 @@ export default function AdminDashboard() {
     setConfirmDialog({ isOpen: true, message: 'Hapus dokumen ini?', targetId: id, actionType: 'doc' });
   };
   const handleRequestId = async (id: number, status: string) => {
-    const res = await fetch(`/api/access-requests/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/access-requests/${id}`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })
     });
     if (res.ok) fetchRequests();
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
     const formData = new FormData();
     formData.append('image', e.target.files[0]);
     try {
-      const res = await fetch('/api/upload-image', { method: 'POST', body: formData });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload-image`, { method: 'POST', body: formData });
       const data = await res.json();
       if (data.success) {
         setCategoryLogo(data.url);
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
 
   const handleSettingsSave = async (e: FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(settings) });
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/settings`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(settings) });
     const data = await res.json();
     if (data.success) {
       showAlert('Pengaturan berhasil disimpan');

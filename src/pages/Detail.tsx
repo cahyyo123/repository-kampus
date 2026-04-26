@@ -18,7 +18,7 @@ export default function Detail() {
   const isCampusEmail = user?.email?.endsWith('@kampus.ac.id') || user?.role === 'admin';
 
   useEffect(() => {
-    fetch(`/api/repository/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/repository/${id}`)
       .then(res => res.json())
       .then(data => {
         setDoc(data);
@@ -28,7 +28,7 @@ export default function Detail() {
 
   useEffect(() => {
     if (user && !isCampusEmail) {
-      fetch(`/api/access-requests/check?document_id=${id}&email=${encodeURIComponent(user.email)}`)
+      fetch(`${import.meta.env.VITE_API_URL}/api/access-requests/check?document_id=${id}&email=${encodeURIComponent(user.email)}`)
         .then(res => res.json())
         .then(data => {
           setAccessStatus(data.status);
@@ -41,7 +41,7 @@ export default function Detail() {
     if (!user) return alert('Silakan login terlebih dahulu');
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/request-access', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/request-access`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -94,7 +94,7 @@ export default function Detail() {
     if (!filePath) return null;
     return (
       <a
-        href={`/uploads/file_pdf/${filePath}`}
+        href={`${import.meta.env.VITE_API_URL}/uploads/file_pdf/${filePath}`}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition font-bold shadow-lg shadow-indigo-200"

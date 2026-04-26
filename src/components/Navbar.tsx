@@ -10,7 +10,7 @@ export default function Navbar() {
   const [settings, setSettings] = useState<any>({});
 
   useEffect(() => {
-    fetch('/api/menus')
+    fetch(`${import.meta.env.VITE_API_URL}/api/menus`)
       .then(res => res.json())
       .then(data => {
         // Hanya tampilkan menu yang tidak di-hide
@@ -18,7 +18,7 @@ export default function Navbar() {
       })
       .catch(() => {});
     
-    fetch('/api/settings')
+    fetch(`${import.meta.env.VITE_API_URL}/api/settings`)
       .then(res => res.json())
       .then(data => {
         setSettings(data);
