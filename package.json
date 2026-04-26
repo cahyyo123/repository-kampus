@@ -5,10 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "tsc",
+    "build": "vite build",
     "start": "node dist/server.js",
-    "frontend:build": "vite build",
-    "frontend:preview": "vite preview",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
