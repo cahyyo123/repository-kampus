@@ -131,15 +131,15 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {stats.docsByCategory.map((cat: any, idx: number) => (
-              <motion.div 
+            {(stats?.docsByCategory || []).map((cat: any, idx: number) => (
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
                 key={idx}
               >
-                <Link 
+                <Link
                   to={`/browse?category=${cat.id}`}
                   className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 flex flex-col items-start group h-full relative overflow-hidden"
                 >
@@ -150,9 +150,15 @@ export default function Home() {
                       getCategoryIcon(cat.name)
                     )}
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{cat.name}</h3>
-                  <p className="text-gray-500 font-medium mt-1">{cat.count} Karya</p>
-                  
+
+                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                    {cat.name}
+                  </h3>
+
+                  <p className="text-gray-500 font-medium mt-1">
+                    {cat.count} Karya
+                  </p>
+
                   <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300">
                     <div className="bg-indigo-50 p-2 rounded-full text-indigo-600">
                       <ArrowRight className="h-4 w-4" />
