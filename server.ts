@@ -249,3 +249,15 @@ app.get('/api/stats', (_, res) => {
 app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.get('/', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'Repository API running',
+    endpoints: [
+      '/api/login',
+      '/api/menus',
+      '/api/repository'
+    ]
+  });
+});
