@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
    APP INIT
 ========================= */
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(cors());
 app.use(express.json());
